@@ -1,0 +1,15 @@
+Use SparkSQL
+EDA Subsets
+
+
+Action Items:
+
+Download Master_Sepsis.dta
+Perform EDA
+Review Data Dictionary 
+Transform if Necessary
+Log Transformations
+Attempt to store full dataset and Query with SPARKSQL
+
+
+Nest meeting November 19th 2017
