@@ -1,0 +1,15 @@
+sudo pip install SoftLayer
+slcli config setup
+#example
+slcli vs create --datacenter=dal09 --domain=<somedomain> --hostname=<some hostname> --os=CENTOS_7_64 --cpu=1 --memory=1024 --billing=hourly
+#info/check
+slcli vs create --help
+slcli vs list
+slcli vs credentials <>
+slcli vs create-options
+ssh root@<>
+slcli vs cancel <id>
+#ssh keypair
+ssh-keygen -f ~/.ssh/id_rsa -b 2048 -t rsa -C 'meaningful comment'
+slcli sshkey add -f ~/.ssh/id_rsa.pub --note 'added during HW 2' <identifier>
+slcli vs create -d hou02 --os CENTOS_LATEST --cpu 1 --memory 1024 --hostname saltmaster --domain someplace.net --key identifier
