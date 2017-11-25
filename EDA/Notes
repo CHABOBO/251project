@@ -1,2 +1,3 @@
 STATA was used for initial EDA and to transform file into .csv and .txt
 Summary statistics are provided and sample files
+  -Note that STATA does not summaruze categorical data and 0 is not an indication of no value, but of non-numerical values
