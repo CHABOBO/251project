@@ -3,3 +3,8 @@ Summary statistics are provided and sample files
   -Note that STATA does not summaruze categorical data and 0 is not an indication of no value, but of non-numerical values
   -Patient IDs are not unique, will need to create a wider dataset with patient, encounter as unique identifier
   -Will add in visit number
+  
+Preprocessing for classification algorithm can be done by making metrics of symptoms, abnormal WBC, PaCO2, RR, HeartRate
+Can make a metric for predispostion
+Can weight various symptoms
+
