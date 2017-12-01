@@ -7,4 +7,6 @@ Summary statistics are provided and sample files
 Preprocessing for classification algorithm can be done by making metrics of symptoms, abnormal WBC, PaCO2, RR, HeartRate
 Can make a metric for predispostion
 Can weight various symptoms
+May not need to add in medications initially because they can combat sepsis
+May not need time, location and number of encounters
 
