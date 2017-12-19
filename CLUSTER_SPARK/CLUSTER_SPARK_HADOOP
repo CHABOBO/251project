@@ -1,0 +1,29 @@
+Created a Spark cluster. Cluster has 4 nodes 4 CPUs, 32G RAM and 100G of disk each. The OS is 16.04-64 Ubuntu.
+
+Installed Jave, SBT and Spark on each server using https://github.com/MIDS-scaling-up/coursework/tree/master/week6/hw/apache_spark_introduction.
+Configured Spark as a cluster of master, spark1-3. Started spark from the master server.
+
+Installed Hadoop with Yarn in the same cluster as well using instructions at https://github.com/MIDS-scaling-up/coursework/blob/master/week13/hw/README.md and  https://github.com/MIDS-scaling-up/coursework/tree/master/week13/lab
+Started dfs and yarn from master.
+
+Put the data file in hdfs
+hdfs dfs -put icd_sepsis.csv /user/root/icd_sepsis.csv
+
+root@master:~# hdfs dfs -ls /user/root
+17/12/15 18:02:00 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Found 3 items
+drwxr-xr-x   - root supergroup          0 2017-12-15 07:31 /user/root/.sparkStaging
+drwxr-xr-x   - root supergroup          0 2017-12-15 07:11 /user/root/OUTPUT_DIR
+-rw-r--r--   3 root supergroup 2848941292 2017-12-15 18:00 /user/root/icd_sepsis.csv
+
+======================================================================
+Install needed software
+
+sudo apt-get install python-pip python-dev build-essential
+sudo pip install --upgrade pip
+sudo pip install --upgrade virtualenv
+pip install pyspark
+pip install numpy
+pip install matplotlib
+apt-get install python-tk
+sudo apt-get -y install ipython ipython-notebook
