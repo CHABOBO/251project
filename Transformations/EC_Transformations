@@ -1,1 +1,10 @@
 
+Must transform dataset to numerical for MLLIB
+
+Code book will be stored on googleslides
+
+Possible Features:
+  DNR - DeathRate
+  BMI, AGE, SEX - set rank and weight
+  partial Sepsis - will be a combination of qSOFA req, but just under the inital req or partial
+  
