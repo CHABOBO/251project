@@ -1,7 +1,10 @@
+###INSTRUCTIONS FOR CLUSTER SETUP###
 sudo pip install SoftLayer
 slcli config setup
+
 #example
 slcli vs create --datacenter=dal09 --domain=<somedomain> --hostname=<some hostname> --os=CENTOS_7_64 --cpu=1 --memory=1024 --billing=hourly
+
 #info/check
 slcli vs create --help
 slcli vs list
@@ -9,12 +12,39 @@ slcli vs credentials <>
 slcli vs create-options
 ssh root@<>
 slcli vs cancel <id>
+
 #ssh keypair
 ssh-keygen -f ~/.ssh/id_rsa -b 2048 -t rsa -C 'meaningful comment'
 slcli sshkey add -f ~/.ssh/id_rsa.pub --note 'added during HW 2' <identifier>
 slcli vs create -d hou02 --os CENTOS_LATEST --cpu 1 --memory 1024 --hostname saltmaster --domain someplace.net --key identifier
 chmod 600 /root/.ssh/id_rsa
-ssh-keygen
-for i in 251project 251projectslave 251projectslave2; do ssh-copy-id $i; done
+#authorized_keys = id_rsa.pub
+#known_hosts
+#hosts
 
-for i in 0.0.0.0 251project 251projectslave 251projectslave2; do ssh $i; done
+ssh-keygen
+for i in sepsismaster sepsis1 sepsis2; do ssh-copy-id $i; done
+for i in 0.0.0.0 sepsismaster sepsis1 sepsis2; do ssh $i; done
+
+#
+curl https://bintray.com/sbt/rpm/rpm | sudo tee /etc/yum.repos.d/bintray-sbt-rpm.repo
+yum install -y java-1.8.0-openjdk-headless sbt
+
+echo export JAVA_HOME=\"$(readlink -f $(which java) | grep -oP '.*(?=/bin)')\" >> /root/.bash_profile
+source /root/.bash_profile
+$JAVA_HOME/bin/java -version
+
+curl http://www.gtlib.gatech.edu/pub/apache/spark/spark-1.6.3/spark-1.6.3-bin-hadoop2.6.tgz | tar -zx -C /usr/local --show-transformed --transform='s,/*[^/]*,spark,'
+echo export SPARK_HOME=\"/usr/local/spark\" >> /root/.bash_profile
+source /root/.bash_profile
+
+vi $SPARK_HOME/conf/slaves
+#sepsismaster
+#sepsis1
+#sepsis2
+
+$SPARK_HOME/sbin/start-master.sh
+$SPARK_HOME/sbin/start_slaves.sh
+
+cd
+./bin/pyspark
