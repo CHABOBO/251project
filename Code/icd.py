@@ -3,52 +3,55 @@
 # First import packages and classes that we will need throughout
 
 ## Imports
-
-from pyspark import SparkConf, SparkContext
-from pyspark.sql import SparkSession
-
-from operator import add
-import sys
-
-## Constants
-APP_NAME = "ICD APP"
+from pyspark import SparkContext, SparkConf
+from pyspark.sql import SQLContext
+from pyspark.ml.feature import StringIndexer
+from pyspark.ml.feature import VectorAssembler
+from pyspark.mllib.regression import LabeledPoint
+from pyspark.sql.functions import col
 
 ##OTHER FUNCTIONS/CLASSES
+from pyspark.ml import Pipeline
+from pyspark.ml.classification import LogisticRegression
+from pyspark.ml.evaluation import BinaryClassificationEvaluator
+from pyspark.ml.evaluation import MulticlassClassificationEvaluator
 
-def main(sc,spark,filename,col_index):
-   icddf=spark.read.format("csv").option("header", "true").load(filename)
+sc = SparkContext()
 
-   # Check to makes sure the data set is loaded correctly
-   #icddf.show()
-   #icddf.printSchema()
-   #print(icddf.count()) 
-   assert icddf.count()==15119485
+sqlContext = SQLContext(sc)
+sepsis = sqlContext.read.format('csv').options(header='true', inferSchema='true').load('sepsis_num.csv')
+#sepsis.printSchema()
+print sepsis.count()
+labelIndexer = StringIndexer(inputCol="infxnqsofa", outputCol="label")
+vecAssembler = VectorAssembler(inputCols=["sepsis_antibiotic","antibiotic","immunosupp_class3","RACE_NUM","ETH_NUM","SEXNUM","icd_ind","icd_rank","sepsis_glucocorticoid","treatment_limit","icd9_477_x","icd9_493_x","age_at_enc","icd9_691_x","temp","biologicals","icd9_995_3","bmi","pain_scale","dnr","dnr_treatment_limit","staph","immunosupp_medname","dncpr_dni","icd9_558_3","albuterol","avpu","avpu_old","dnr_dni","immunosupp_class31"],outputCol = "features")
 
-   # Read few lines
+# Split data
+(trainingData, testData) = sepsis.randomSplit([0.7, 0.3])
 
-   print icddf.take(1)
-   icddf.select("infxnqsofa").show()
-   icddf.select("temp").show()
-   #uval = icddf.rdd.map(lambda x: x[0]).distinct().collect()
-   #print uval
-   # given a list of indicies...
-   indicies = [int(i) for i in [1,2]]
+# Decision Tree Classifier
+lr = LogisticRegression(maxIter=10, regParam=0.3, elasticNetParam=0.8)
+pipeline = Pipeline(stages=[labelIndexer, vecAssembler, lr])
 
-   # select only those columns from each row
-   idf = icddf.rdd.map(lambda x: [x[idx] for idx in indicies])
+# Fit the data
+model = pipeline.fit(trainingData)
 
-   idf.show()
+# Predict
+predictions = model.transform(testData)
+predictions.printSchema()
 
+evaluator = MulticlassClassificationEvaluator(labelCol="label", predictionCol="prediction", metricName="weightedPrecision")
+predictions.first()
+weightedPrecision = evaluator.evaluate(predictions)
+print "Model Weighted Precision: ", weightedPrecision
 
-   
-if __name__ == "__main__":
+evaluator = MulticlassClassificationEvaluator(labelCol="label", predictionCol="prediction", metricName="accuracy")
+accuracy = evaluator.evaluate(predictions)
+print "Model Accuracy: ", accuracy
 
-   # Configure Spark
-   conf = SparkConf().setAppName(APP_NAME)
-   conf = conf.setMaster("local[*]")
-   sc   = SparkContext(conf=conf)
-   spark = SparkSession.builder.master("local").appName(APP_NAME).getOrCreate()
-   filename = sys.argv[1]
-   input_col_index = sys.argv[2] # For example - ['1','2','3','4']
-   # Execute Main functionality
-   main(sc, spark, filename, input_col_index)
+evaluator = MulticlassClassificationEvaluator(labelCol="label", predictionCol="prediction", metricName="f1")
+fscore = evaluator.evaluate(predictions)
+print "Model F1-Score: ", fscore
+
+evaluator = MulticlassClassificationEvaluator(labelCol="label", predictionCol="prediction", metricName="weightedRecall")
+wrecall = evaluator.evaluate(predictions)
+print "Model Weighted Recall: ", wrecall 
