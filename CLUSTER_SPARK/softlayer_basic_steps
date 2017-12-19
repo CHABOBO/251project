@@ -13,3 +13,8 @@ slcli vs cancel <id>
 ssh-keygen -f ~/.ssh/id_rsa -b 2048 -t rsa -C 'meaningful comment'
 slcli sshkey add -f ~/.ssh/id_rsa.pub --note 'added during HW 2' <identifier>
 slcli vs create -d hou02 --os CENTOS_LATEST --cpu 1 --memory 1024 --hostname saltmaster --domain someplace.net --key identifier
+
+ssh-keygen
+for i in 251project 251projectslave 251projectslave2; do ssh-copy-id $i; done
+
+for i in 0.0.0.0 251project 251projectslave 251projectslave2; do ssh $i; done
